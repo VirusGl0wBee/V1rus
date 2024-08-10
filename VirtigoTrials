@@ -1,0 +1,115 @@
+'''
+Ayana Lopez
+    Virtigo Trials
+08/10/2024
+'''
+
+''' Write a text-based game where the player has to survive an entire day of fighting 
+monsters. The player will need basic stats like health, attack, and defense. There needs
+to be a variety of monsters to fight, each with their own stats. There needs to be a 
+time system that advances as the player fights monsters. The player will be able to win 
+by surviving the entire day and sleeping at night. The player will lose if their health
+drops to zero. '''
+
+import random
+import time # Added time module for pausing - 08/10/2024
+
+# Define the player's stats
+player = {
+    "name": "Virtigo",
+    "health": 350,
+    "attack": 35,
+    "shield": 45,
+}
+
+# Define the monsters
+monsters = [
+    {"name": "Goblin", "health": 80, "attack": 25, "shield": 5},
+    {"name": "Orc", "health": 120, "attack": 35, "shield": 50},
+    {"name": "Troll", "health": 250, "attack": 50, "shield": 50},
+    {"name": "Dragon", "health": 500, "attack": 75, "shield": 100},
+]
+
+# Define the time system
+tod = ["Morning", "Afternoon", "Evening", "Night"]
+currentTime = 0
+
+def displayStats(): # Display the player's stats
+    print(f"\n{player["name"]}'s Stats: ")
+    print("Health: ", player["health"])
+    print("Attack: ", player["attack"])
+    print("Shield: ", player["shield"])
+
+def displayMonster(monster): # Display the monster's stats
+    print("\nMonster Stats: ")
+    print("Name: ", monster["name"])
+    print("Health: ", monster["health"])
+    print("Attack: ", monster["attack"])
+    print("Shield: ", monster["shield"])
+
+# Added function to heal the player - 08/10/2024
+def healPlayer(): # Heal the player
+    healpoints = random.randint(15, 100) # Randomly generate heal points
+    player["health"] += healpoints
+    print(f"\nYou've been healed for {healpoints} health points!")
+
+def fightMonster(monster):
+    monster = random.choice(monsters) # Randomly select a monster
+    print(f"\nYou've encountered a {monster['name']}!")
+
+    while player["health"] > 0 and monster["health"] > 0: # Player and monster are still alive
+        # Player's turn
+        monster["health"] -= player['attack']
+        print(f"\nYou attacked the {monster['name']} for {player['attack']} damage!")
+        time.sleep(1) # Pause for 1 second
+
+        if monster["health"] <= 0: # Check if the monster is defeated
+            print(f"\nYou've defeated the {monster['name']}!")
+            break
+
+        # Monster's turn
+        player["health"] -= monster['attack']
+        print(f"\nThe {monster['name']} attacked you for {monster['attack']} damage!")
+        time.sleep(1) # Pause for 1 second
+
+        if player["health"] <= 0: # Check if the player is defeated
+            print("\nYou've been defeated!")
+            break
+
+def main():
+    global currentTime
+    while currentTime < len(tod): # Loop through the time of day
+        print(f"\nIt's {tod[currentTime]}")
+        currentTime += 1
+
+        if currentTime == "Night": # Check if it's night time
+            print("\nYou've survived the entire day! Let's head to bed.")
+            break
+
+        print("\nWhat would you like to do?") # Display the options
+        print("1. Fight Monster")
+        print("2. Check stats")
+        print("3. Rest")
+        print("4. Heal")
+
+        choice = input("\nWhat would you like to do? ") # Get the player's choice
+
+        if choice == "1": # Fight a monster
+            fightMonster(monster=random.choice(monsters)) # Fight a random monster
+            if player["health"] <= 0:
+                print("\nGame over. You did not survive the day.")
+                return
+        elif choice == "2": # Display the player's stats
+            displayStats()
+        elif choice == "3": # Rest
+            currentTime += 1
+        elif choice == "4": # Heal the player
+            healPlayer()
+        else:
+            print("\nInvalid choice. Try again.")
+    print("\nCongratulations! You've survived the entire day! Rest easy Virtigo.")
+
+# Start the game
+print("Welcome to Virtigo Trials!")
+main() # Call the main function
+        
